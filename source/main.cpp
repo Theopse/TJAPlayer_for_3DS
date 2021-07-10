@@ -10,6 +10,7 @@
 #include "result.h"
 #include "main.h"
 #include "vorbis.h"
+#include "c2d.h"
 
 C2D_Sprite sprites[Sprite_Number];			//画像用
 static C2D_SpriteSheet spriteSheet;
@@ -25,9 +26,10 @@ void draw_debug(float x, float y, const char *text) {
 	//使用例
 	//snprintf(get_buffer(), BUFFER_SIZE, "%d", 10);
 	// draw_debug(300, 0, get_buffer());
+	c2d::fontInit();
 
 	C2D_TextBufClear(g_dynamicBuf);
-	C2D_TextParse(&dynText, g_dynamicBuf, text);
+	C2D_TextFontParse(&dynText, c2d::getFont(), g_dynamicBuf, text);
 	C2D_TextOptimize(&dynText);
 	C2D_DrawText(&dynText, C2D_WithColor, x, y, 0.5f, 0.5f, 0.5f, C2D_Color32f(0.0f, 1.0f, 0.0f, 1.0f));
 }

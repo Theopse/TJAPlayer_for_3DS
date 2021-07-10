@@ -7,6 +7,7 @@
 #include "option.h"
 #include <sys/types.h>
 #include <sys/stat.h>
+#include "c2d.h"
 
 void load_file_list(const char *path);
 void draw_select_text(float x, float y, const char *text);
@@ -16,7 +17,7 @@ LIST_T List[List_Max];
 char buf_select[256];
 int SongNumber = 0;		//曲の総数
 int count = 0,cursor = 0,course_cursor = 0,course_count = 0,SelectedId = 0,course = COURSE_ONI;
-bool isSelectCourse = false,isGameStart = false;
+bool isSelectCourse = false,isGameStart = false; 
 
 void load_file_main() {
 
@@ -272,24 +273,27 @@ C2D_Text SelectText;
 
 void draw_select_text(float x, float y, const char *text) {
 
+	c2d::fontInit();
 	C2D_TextBufClear(g_SelectText);
-	C2D_TextParse(&SelectText, g_SelectText, text);
+	C2D_TextFontParse(&SelectText, c2d::getFont(), g_SelectText, text);
 	C2D_TextOptimize(&SelectText);
 	C2D_DrawText(&SelectText, C2D_WithColor, x, y, 1.0f, 0.5f, 0.5f, C2D_Color32f(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
 void draw_result_text(float x, float y,float size, const char *text) {
 
+	c2d::fontInit();
 	C2D_TextBufClear(g_SelectText);
-	C2D_TextParse(&SelectText, g_SelectText, text);
+	C2D_TextFontParse(&SelectText, c2d::getFont(), g_SelectText, text);
 	C2D_TextOptimize(&SelectText);
 	C2D_DrawText(&SelectText, C2D_WithColor, x, y, 0.5f, size, size, C2D_Color32f(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
 void calc_result_text(const char *text, float *width, float *height) {
 
+	c2d::fontInit();
 	C2D_TextBufClear(g_SelectText);
-	C2D_TextParse(&SelectText, g_SelectText, text);
+	C2D_TextFontParse(&SelectText, c2d::getFont(), g_SelectText, text);
 	C2D_TextOptimize(&SelectText);
 	float size = 0.7;
 	C2D_TextGetDimensions(&SelectText, size, size, width, height);
@@ -297,8 +301,9 @@ void calc_result_text(const char *text, float *width, float *height) {
 
 void draw_option_text(float x, float y, const char *text,bool state, float *width, float *height, float sizex, float sizey) {	//size省略可(0.7)
 
+	c2d::fontInit();
 	C2D_TextBufClear(g_SelectText);
-	C2D_TextParse(&SelectText, g_SelectText, text);
+	C2D_TextFontParse(&SelectText, c2d::getFont(), g_SelectText, text);
 	C2D_TextOptimize(&SelectText);
 
 	if (state == false) {
@@ -312,8 +317,9 @@ void draw_option_text(float x, float y, const char *text,bool state, float *widt
 
 void draw_pause_text(float x, float y, const char *text, float *width, float *height) {
 
+	c2d::fontInit();
 	C2D_TextBufClear(g_SelectText);
-	C2D_TextParse(&SelectText, g_SelectText, text);
+	C2D_TextFontParse(&SelectText, c2d::getFont(), g_SelectText, text);
 	C2D_TextOptimize(&SelectText);
 	float size = 1.0;
 

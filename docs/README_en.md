@@ -1,4 +1,4 @@
-[日本語](README.md)
+[简体中文](../README.md) [日本語](README_ja.md)
 <div align="center">
     <img src="https://user-images.githubusercontent.com/18244518/120987722-d49e8300-c7b8-11eb-9d13-f5c92804dae2.png" alt="banner">
 </div>

@@ -6,6 +6,7 @@
 #include "notes.h"
 #include "score.h"
 #include "vorbis.h"
+#include "c2d.h"
 #include "option.h"
 
 #define AUTO_ROLL_FRAME 2 //オート時の連打の間隔
@@ -446,6 +447,9 @@ void notes_judge(double CurrentTimeNotes, bool isDon, bool isKatsu, int cnt) {
 	OPTION_T Option;
 	get_option(&Option);
 
+	TJA_HEADER_T Header;
+	get_tja_header(&Header);
+
 	int CurrentJudgeNotes[2] = { -1,-1 };		//現在判定すべきノーツ ドン,カツ
 	double CurrentJudgeNotesLag[2] = { -1,-1 };	//判定すべきノーツの誤差(s)
 
@@ -563,13 +567,16 @@ void notes_judge(double CurrentTimeNotes, bool isDon, bool isKatsu, int cnt) {
 
 	else if (Option.isAuto == false) {			//手動
 
+		double perfect = Header.course == COURSE_ONI ? 0.025 : Header.course == COURSE_EDIT ? 0.025 : 0.034;
+		double nice = Header.course == COURSE_ONI ? 0.07 : Header.course == COURSE_EDIT ? 0.07 : 0.117;
+		double bad = Header.course == COURSE_ONI ? 0.108 : Header.course == COURSE_EDIT ? 0.108 : 0.150;
 		bool isBig;
 		if (Notes[CurrentJudgeNotes[0]].knd == NOTES_BIGDON || Notes[CurrentJudgeNotes[0]].knd == NOTES_BIGKATSU) isBig = true;
 		else isBig = false;
 
 		if (isDon == true && CurrentJudgeNotes[0] != -1) {	//ドン
 
-			if (CurrentJudgeNotesLag[0] <= 0.034) {			//良
+			if (CurrentJudgeNotesLag[0] <= perfect) {			//良
 				delete_notes(CurrentJudgeNotes[0]);
 				if (isBig == true) {
 					make_judge(SPECIAL_PERFECT, CurrentTimeNotes);
@@ -580,7 +587,7 @@ void notes_judge(double CurrentTimeNotes, bool isDon, bool isKatsu, int cnt) {
 					score_update(PERFECT);
 				}
 			}
-			else if (CurrentJudgeNotesLag[0] <= 0.117) {	//可
+			else if (CurrentJudgeNotesLag[0] <= nice) {	//可
 				make_judge(1, CurrentTimeNotes);
 				delete_notes(CurrentJudgeNotes[0]);
 				if (isBig == true) {
@@ -592,7 +599,7 @@ void notes_judge(double CurrentTimeNotes, bool isDon, bool isKatsu, int cnt) {
 					score_update(NICE);
 				}
 			}
-			else if (CurrentJudgeNotesLag[0] <= 0.150) {	//不可
+			else if (CurrentJudgeNotesLag[0] <= bad) {	//不可
 				make_judge(BAD, CurrentTimeNotes);
 				delete_notes(CurrentJudgeNotes[0]);
 				score_update(BAD);
@@ -601,7 +608,7 @@ void notes_judge(double CurrentTimeNotes, bool isDon, bool isKatsu, int cnt) {
 
 		if (isKatsu == true && CurrentJudgeNotes[1] != -1) {	//カツ
 
-			if (CurrentJudgeNotesLag[1] <= 0.034) {			//良
+			if (CurrentJudgeNotesLag[1] <= perfect) {			//良
 				delete_notes(CurrentJudgeNotes[1]);
 				if (isBig == true) {
 					make_judge(SPECIAL_PERFECT, CurrentTimeNotes);
@@ -612,7 +619,7 @@ void notes_judge(double CurrentTimeNotes, bool isDon, bool isKatsu, int cnt) {
 					score_update(PERFECT);
 				}
 			}
-			else if (CurrentJudgeNotesLag[1] <= 0.117) {	//可
+			else if (CurrentJudgeNotesLag[1] <= nice) {	//可
 				make_judge(1, CurrentTimeNotes);
 				delete_notes(CurrentJudgeNotes[1]);
 				if (isBig == true) {
@@ -624,7 +631,7 @@ void notes_judge(double CurrentTimeNotes, bool isDon, bool isKatsu, int cnt) {
 					score_update(NICE);
 				}
 			}
-			else if (CurrentJudgeNotesLag[1] <= 0.150) {	//不可
+			else if (CurrentJudgeNotesLag[1] <= bad) {	//不可
 				make_judge(BAD, CurrentTimeNotes);
 				delete_notes(CurrentJudgeNotes[1]);
 				score_update(BAD);
@@ -1140,8 +1147,9 @@ C2D_Text NotesText;
 
 void draw_notes_text(float x, float y, const char *text, float *width, float *height) {
 
+	c2d::fontInit();
 	C2D_TextBufClear(g_NotesText);
-	C2D_TextParse(&NotesText, g_NotesText, text);
+	C2D_TextFontParse(&NotesText, c2d::getFont(), g_NotesText, text);
 	C2D_TextOptimize(&NotesText);
 	float size = 0.7;
 
