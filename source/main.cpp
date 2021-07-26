@@ -74,6 +74,16 @@ void button_game(bool *isDon,bool *isKatsu,OPTION_T Option, unsigned int key) {
 	}
 }
 
+bool check_dsp1() { //DSP1を起動しているか確認
+
+	FILE* fp = fopen(PATH_DSP1, "r");
+
+	if (fp == NULL) return false;
+	fclose(fp);
+
+	return true;
+}
+
 int touch_x, touch_y, touch_cnt,PreTouch_x,PreTouch_y;	//タッチ用
 
 int main() {
